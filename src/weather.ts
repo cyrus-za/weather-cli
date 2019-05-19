@@ -32,10 +32,10 @@ const unitHash = {
 
 const defaultOptions: WeatherOptions = { units: 'Standard' };
 
-function formatResponse({ weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
+function formatResponse(location, { weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
   const tempUnit = unitHash[units].temperature;
 
-  return `${description} with ${temp} degrees ${tempUnit} and a humidity of ${humidity}%`;
+  return `${location} weather is currently ${description} with ${temp} degrees ${tempUnit} and a humidity of ${humidity}%`;
 }
 
 function validateParams(location, options) {
@@ -60,7 +60,7 @@ async function weather(location: string, options: WeatherOptions = {}) {
     params
   });
 
-  return formatResponse(data, params);
+  return formatResponse(location, data, params);
 }
 
 export default weather;

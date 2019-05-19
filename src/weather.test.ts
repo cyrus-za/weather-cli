@@ -74,22 +74,22 @@ describe('weather.ts', () => {
 
   it('should get weather response', async () => {
     const response = await weather('Earth');
-    expect(response).toEqual('overcast clouds with 289.5 degrees Kelvin and a humidity of 89%');
+    expect(response).toEqual('Earth weather is currently overcast clouds with 289.5 degrees Kelvin and a humidity of 89%');
   });
 
   it('should get weather response in Celsius', async () => {
     const response = await weather('Earth', { units: 'Metric' });
-    expect(response).toEqual('overcast clouds with 16.35 degrees Celsius and a humidity of 89%');
+    expect(response).toEqual('Earth weather is currently overcast clouds with 16.35 degrees Celsius and a humidity of 89%');
   });
 
   it('should get weather response in Imperial', async () => {
     const response = await weather('Earth', { units: 'Imperial' });
-    expect(response).toEqual('overcast clouds with 61.7 degrees Fahrenheit and a humidity of 89%');
+    expect(response).toEqual('Earth weather is currently overcast clouds with 61.7 degrees Fahrenheit and a humidity of 89%');
   });
 
   it('should get weather response in Standard', async () => {
     const response = await weather('Earth', { units: 'Standard' });
-    expect(response).toEqual('overcast clouds with 289.5 degrees Kelvin and a humidity of 89%');
+    expect(response).toEqual('Earth weather is currently overcast clouds with 289.5 degrees Kelvin and a humidity of 89%');
   });
 
   it('should get and error when using unsupported unit', async () => {

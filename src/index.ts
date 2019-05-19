@@ -1,18 +1,20 @@
-// @ts-ignore
 import weather from './weather';
 
-const location = process.argv[2];
-
-async function main() {
+async function main(location) {
   const response = await weather(location);
-  console.log(`Weather in ${location} is currently ${response}`);
+  console.log(response);
 }
 
-main()
-  .catch((e: Error) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .then(() => {
-    process.exit();
-  });
+if (require.main === module) {
+  const location = process.argv[2];
+  main(location)
+    .catch((e: Error) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .then(() => {
+      process.exit();
+    });
+}
+
+export default main;

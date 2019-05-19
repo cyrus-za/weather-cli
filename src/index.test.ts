@@ -1,63 +1,48 @@
-import { exec } from 'child_process';
-import * as path from 'path';
-import { promisify } from 'util';
-import { API_KEY } from './weather';
-
-const pathToFile = path.join(__dirname, 'index.ts');
-
-const execAsync = promisify(exec);
+import * as index from './index';
+import * as weather from './weather';
 
 describe('index.ts', () => {
-  it('should be able to be executed with ts-node without errors', () => {
-    exec(`ts-node ${pathToFile}`);
+  beforeEach(() => {
+    // @ts-ignore
+    weather.default = jest.fn(async location => `${location} weather is currently cloudy with 22 degrees celsius`);
   });
-
-  it('should have open weather map api key in env', () => {
-    expect(API_KEY).toBeDefined();
+  it('should load module without errors', () => {
+    expect(true).toBe(true);
+  });
+  it('should load module without calling main', () => {
+    const indexSpy = jest.spyOn(index, 'default');
+    expect(indexSpy).not.toHaveBeenCalled();
   });
 
   it('should log the weather for New York', async () => {
     const location = 'New York';
-    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
-    expect(stderr).toBeFalsy();
-    expect(stdout).toContain(`Weather in New York is currently `);
-    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
-    expect(stdout.length).toBeGreaterThan(80);
+    const consoleLog = jest.spyOn(console, 'log');
+    await index.default(location);
+    expect(consoleLog).toHaveBeenCalled();
+    expect(consoleLog).toHaveBeenCalledWith('New York weather is currently cloudy with 22 degrees celsius');
   });
 
   it('should log the weather for Tokyo', async () => {
     const location = 'Tokyo';
-    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
-    expect(stderr).toBeFalsy();
-    expect(stdout).toContain(`Weather in Tokyo is currently `);
-    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
-    expect(stdout.length).toBeGreaterThan(80);
+    const consoleLog = jest.spyOn(console, 'log');
+    await index.default(location);
+    expect(consoleLog).toHaveBeenCalled();
+    expect(consoleLog).toHaveBeenCalledWith('Tokyo weather is currently cloudy with 22 degrees celsius');
   });
 
   it('should log the weather for São Paulo', async () => {
     const location = 'São Paulo';
-    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
-    expect(stderr).toBeFalsy();
-    expect(stdout).toContain(`Weather in São Paulo is currently `);
-    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
-    expect(stdout.length).toBeGreaterThan(80);
-  });
-
-  it('should log the weather for Pluto', async () => {
-    const location = 'Pluto';
-    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
-    expect(stderr).toBeFalsy();
-    expect(stdout).toContain(`Weather in Pluto is currently `);
-    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
-    expect(stdout.length).toBeGreaterThan(80);
+    const consoleLog = jest.spyOn(console, 'log');
+    await index.default(location);
+    expect(consoleLog).toHaveBeenCalled();
+    expect(consoleLog).toHaveBeenCalledWith('São Paulo weather is currently cloudy with 22 degrees celsius');
   });
 
   it('should log the weather for 10005', async () => {
     const location = '10005';
-    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
-    expect(stderr).toBeFalsy();
-    expect(stdout).toContain(`Weather in 10005 is currently `);
-    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
-    expect(stdout.length).toBeGreaterThan(80);
+    const consoleLog = jest.spyOn(console, 'log');
+    await index.default(location);
+    expect(consoleLog).toHaveBeenCalled();
+    expect(consoleLog).toHaveBeenCalledWith('10005 weather is currently cloudy with 22 degrees celsius');
   });
 });
