@@ -24,4 +24,40 @@ describe('index.ts', () => {
     expect(stdout).toContain(` degrees Kelvin and a humidity of `);
     expect(stdout.length).toBeGreaterThan(80);
   });
+
+  it('should log the weather for Tokyo', async () => {
+    const location = 'Tokyo';
+    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
+    expect(stderr).toBeFalsy();
+    expect(stdout).toContain(`Weather in Tokyo is currently `);
+    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
+    expect(stdout.length).toBeGreaterThan(80);
+  });
+
+  it('should log the weather for São Paulo', async () => {
+    const location = 'São Paulo';
+    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
+    expect(stderr).toBeFalsy();
+    expect(stdout).toContain(`Weather in São Paulo is currently `);
+    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
+    expect(stdout.length).toBeGreaterThan(80);
+  });
+
+  it('should log the weather for Pluto', async () => {
+    const location = 'Pluto';
+    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
+    expect(stderr).toBeFalsy();
+    expect(stdout).toContain(`Weather in Pluto is currently `);
+    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
+    expect(stdout.length).toBeGreaterThan(80);
+  });
+
+  it('should log the weather for 10005', async () => {
+    const location = '10005';
+    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
+    expect(stderr).toBeFalsy();
+    expect(stdout).toContain(`Weather in 10005 is currently `);
+    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
+    expect(stdout.length).toBeGreaterThan(80);
+  });
 });

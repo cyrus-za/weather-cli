@@ -35,12 +35,20 @@ const defaultOptions: WeatherOptions = { units: 'Standard' };
 function formatResponse({ weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
   const tempUnit = unitHash[units].temperature;
 
-  if (!tempUnit) throw new Error(`Units ${units} are not supported. Please use one of: ${Object.keys(unitHash).join(', ')}`);
-
   return `${description} with ${temp} degrees ${tempUnit} and a humidity of ${humidity}%`;
 }
 
+function validateParams(location, options) {
+  if (!location) {
+    throw new Error('Please provide a location');
+  }
+  if (options.units && !unitHash[options.units]) {
+    throw new Error(`Units ${options.units} are not supported. Please use one of: ${Object.keys(unitHash).join(', ')}`);
+  }
+}
+
 async function weather(location: string, options: WeatherOptions = {}) {
+  validateParams(location, options);
   const params: WeatherRequestParams = {
     ...defaultOptions,
     ...options,
