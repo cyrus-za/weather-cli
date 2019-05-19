@@ -1,4 +1,5 @@
-export module WeatherResponses {
+/* eslint-disable camelcase */  // not much I can do about the api response shape
+export namespace WeatherResponses {
   interface Coord {
     lon: number;
     lat: number;

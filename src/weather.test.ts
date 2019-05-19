@@ -1,30 +1,53 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import weather, { WEATHER_API_URL } from './weather';
 import { WeatherResponses } from './types';
 
+type Units = 'Standard' | 'Metric'
 jest.mock('axios');
 
 const mockedAxiosGet: jest.Mock<typeof axios.get> = (axios.get as any);
 
-const mockedResponse: WeatherResponses.CurrentWeatherDataResponse =
-  { // example data from openweathermap.org documentation
-    'coord': { 'lon': 139, 'lat': 35 },
-    'sys': { 'id': 123, type: 3, 'message': 1, 'country': 'JP', 'sunrise': 1369769524, 'sunset': 1369821049 },
-    'weather': [{ 'id': 804, 'main': 'clouds', 'description': 'overcast clouds', 'icon': '04n' }],
-    'main': { 'temp': 289.5, 'humidity': 89, 'pressure': 1013, 'temp_min': 287.04, 'temp_max': 292.04 },
-    'wind': { 'gust': 20, 'speed': 7.31, 'deg': 187.002 },
-    'clouds': { 'all': 92 },
-    'dt': 1369824698,
-    'id': 1851632,
-    'name': 'Shuzenji',
-    'cod': 200,
-    'base': 'base',
-    'visibility': 10
-  };
+interface UnitValueHash {
+  // @ts-ignore
+  [key: Units]: { temperature: number };
+}
 
 // @ts-ignore
-mockedAxiosGet.mockResolvedValue({ data: mockedResponse });
+const unitValueHash: UnitValueHash = {
+  Metric: {
+    temperature: 16.35
+  },
+  Standard: {
+    temperature: 289.5
+  }
+};
+Object.freeze(unitValueHash); // freezing as this is declared outside of tests
+
 describe('weather.ts', () => {
+
+  beforeEach(() => {
+    const mockedResponse: WeatherResponses.CurrentWeatherDataResponse =
+      { // example data from openweathermap.org documentation
+        'coord': { 'lon': 139, 'lat': 35 },
+        'sys': { 'id': 123, type: 3, 'message': 1, 'country': 'JP', 'sunrise': 1369769524, 'sunset': 1369821049 },
+        'weather': [{ 'id': 804, 'main': 'clouds', 'description': 'overcast clouds', 'icon': '04n' }],
+        'main': { 'temp': 289.5, 'humidity': 89, 'pressure': 1013, 'temp_min': 287.04, 'temp_max': 292.04 },
+        'wind': { 'gust': 20, 'speed': 7.31, 'deg': 187.002 },
+        'clouds': { 'all': 92 },
+        'dt': 1369824698,
+        'id': 1851632,
+        'name': 'Shuzenji',
+        'cod': 200,
+        'base': 'base',
+        'visibility': 10
+      };
+
+    // @ts-ignore
+    mockedAxiosGet.mockImplementation(async (url: string, config: AxiosRequestConfig) => {
+      mockedResponse.main.temp = unitValueHash[config.params.units].temperature;
+      return { data: mockedResponse };
+    });
+  });
 
   it('should import weather module', () => {
     expect(weather).toBeDefined();
@@ -40,7 +63,7 @@ describe('weather.ts', () => {
     await weather(location);
     expect(axios.get).toHaveBeenCalledWith('/weather', {
       baseURL: WEATHER_API_URL,
-      params: { q: location }
+      params: { q: location, units: 'Standard' }
     });
   });
 
@@ -50,7 +73,7 @@ describe('weather.ts', () => {
   });
 
   it('should get weather response in Celsius', async () => {
-    const response = await weather('', {units: 'metric'});
+    const response = await weather('', { units: 'Metric' });
     expect(response).toEqual('overcast clouds with 16.35 degrees Celsius and a humidity of 89%');
   });
 
