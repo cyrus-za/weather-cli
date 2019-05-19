@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import memoize from 'memoizee';
 import { WeatherResponses } from './types';
 
 import CurrentWeatherDataResponse = WeatherResponses.CurrentWeatherDataResponse;
@@ -14,7 +15,8 @@ interface WeatherOptions {
 }
 
 interface WeatherRequestParams extends WeatherOptions {
-  q: string;
+  q?: string;
+  zip?: string;
   appId: string;
 }
 
@@ -32,10 +34,10 @@ const unitHash = {
 
 const defaultOptions: WeatherOptions = { units: 'Standard' };
 
-function formatResponse(location, { weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
+function formatResponse({ name, sys: { country }, weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
   const tempUnit = unitHash[units].temperature;
 
-  return `${location} weather is currently ${description} with ${temp} °${tempUnit} and a humidity of ${humidity}%`;
+  return `${name} (${country}) weather is currently ${description} with ${temp} °${tempUnit} and a humidity of ${humidity}%`;
 }
 
 function validateParams(location, options) {
@@ -47,20 +49,42 @@ function validateParams(location, options) {
   }
 }
 
-async function weather(location: string, options: WeatherOptions = {}) {
+function addCityOrZipToParams(location: string | number) {
+  switch (typeof location) {
+    case 'number':
+      return { zip: String(location) };
+    case 'string':
+      if (Number(location)) return addCityOrZipToParams(Number(location));
+      return { q: location };
+    default:
+      throw new Error('Location must be a string or number');
+  }
+}
+
+async function weather(location: string | number, options: WeatherOptions = {}) {
   validateParams(location, options);
   const params: WeatherRequestParams = {
     ...defaultOptions,
     ...options,
-    q: location,
-    appId: API_KEY
+    appId: API_KEY,
+    ...addCityOrZipToParams(location)
   };
-  const { data }: AxiosResponse<WeatherResponses.CurrentWeatherDataResponse> = await axios.get('/weather', {
-    baseURL: WEATHER_API_URL,
-    params
-  });
 
-  return formatResponse(location, data, params);
+  try {
+    const { data }: AxiosResponse<WeatherResponses.CurrentWeatherDataResponse> = await axios.get('/weather', {
+      baseURL: WEATHER_API_URL,
+      params
+    });
+    return formatResponse(data, params);
+  } catch (e) {
+    if (e.message.indexOf('404') > -1) {
+      throw new Error(`Location ${location}, not found`);
+    }
+    throw e;
+  }
 }
 
-export default weather;
+// Caching for 10 minutes as per openweathermap.org documentation
+const memoizedWeather = memoize(weather, { length: false, maxAge: 600000 });
+
+export default memoizedWeather;

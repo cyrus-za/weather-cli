@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
+    "memoizee": "^0.4.14",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
@@ -50,7 +51,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && jest"
     }
   },
   "lint-staged": {
