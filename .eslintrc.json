@@ -4,19 +4,37 @@
     "es6": true,
     "node": true
   },
-  "extends": ["plugin:@typescript-eslint/recommended", "plugin:jest/recommended", "airbnb-base", "prettier"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:jest/recommended",
+    "airbnb-base",
+    "prettier"
+  ],
   "settings": {
     "import/resolver": {
+      "typescript": {},
       "node": {
-        "extensions": [".js", ".ts"]
+        "extensions": [
+          ".js",
+          ".ts"
+        ]
       }
     }
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "jest", "prettier", "import"],
+  "plugins": [
+    "@typescript-eslint",
+    "jest",
+    "prettier",
+    "import"
+  ],
   "rules": {
-   "@typescript-eslint/indent": [2, 2],
-   "@typescript-eslint/explicit-function-return-type": 0,
-   "@typescript-eslint/no-explicit-any": 0
+    "import/no-unresolved": "error",
+    "@typescript-eslint/indent": [
+      2,
+      2
+    ],
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/no-explicit-any": 0
   }
 }
