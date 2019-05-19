@@ -27,9 +27,9 @@ function validateArgs({ units }) {
   }
 }
 
-function formatLocationArgs({ l: locationFromArga = [], _: unauthorizedArgs }) {
+function formatLocationArgs({ l: locationFromArga = [], _: unlinkedArgs }) {
   const locationArgs = Array.isArray(locationFromArga) ? locationFromArga : [locationFromArga];
-  return [...locationArgs, ...unauthorizedArgs];
+  return [...locationArgs, ...unlinkedArgs];
 }
 
 if (require.main === module) {
