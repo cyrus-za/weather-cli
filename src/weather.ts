@@ -1,9 +1,12 @@
 import axios from 'axios';
 
-const WEATHER_API_URL = '';
+export const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5';
 
-async function weather() {
-  await axios.get(WEATHER_API_URL);
+async function weather(location) {
+  await axios.get('/weather', {
+    baseURL: WEATHER_API_URL,
+    params: { q: location }
+  });
 }
 
-export  default weather;
+export default weather;
