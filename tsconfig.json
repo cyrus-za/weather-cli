@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es2017",
+    "noImplicitAny": false,
+    "lib": ["esnext"],
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "typeRoots": ["src/types", "node_modules/@types"]
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
+}
