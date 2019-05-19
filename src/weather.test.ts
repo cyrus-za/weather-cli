@@ -1,5 +1,5 @@
-import weather from './weather';
 import axios from 'axios';
+import weather from './weather';
 
 jest.mock('axios');
 
@@ -9,7 +9,8 @@ describe('weather.ts', () => {
     expect(weather).toBeDefined();
   });
 
-  it('should call weather api', () => {
+  it('should call weather api', async () => {
+    await weather();
     expect(axios.get).toHaveBeenCalled();
   });
 
