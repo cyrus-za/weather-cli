@@ -49,25 +49,25 @@ function validateParams(location, options) {
   }
 }
 
-function addCityOrZipToParams(location: string | number) {
+function getCityOrZipToParams(location: string | number) {
   switch (typeof location) {
     case 'number':
       return { zip: String(location) };
     case 'string':
-      if (Number(location)) return addCityOrZipToParams(Number(location));
+      if (Number(location)) return getCityOrZipToParams(Number(location));
       return { q: location };
     default:
       throw new Error('Location must be a string or number');
   }
 }
 
-async function weather(location: string | number, options: WeatherOptions = {}) {
+async function getWeatherForLocationAsync(location: string | number, options: WeatherOptions = {}) {
   validateParams(location, options);
   const params: WeatherRequestParams = {
     ...defaultOptions,
     ...options,
     appId: API_KEY,
-    ...addCityOrZipToParams(location)
+    ...getCityOrZipToParams(location)
   };
 
   try {
@@ -85,6 +85,6 @@ async function weather(location: string | number, options: WeatherOptions = {}) 
 }
 
 // Caching for 10 minutes as per openweathermap.org documentation
-const memoizedWeather = memoize(weather, { length: false, maxAge: 600000 });
+const memoizedWeather = memoize(getWeatherForLocationAsync, { length: false, maxAge: 600000 });
 
 export default memoizedWeather;

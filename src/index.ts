@@ -12,21 +12,34 @@ async function main({ locations = [] as (string | number)[], units = 'Standard' 
   await Promise.all(promises);
 }
 
-if (require.main === module) {
-  const { l: locationFromArga = [], units, _: unauthorizedArgs } = minimist(process.argv.slice(2), {
+function extractArgsFromCommandLine() {
+  return minimist(process.argv.slice(2), {
     alias: {
       u: ['units', 'unit'],
       l: ['location', 'locations']
     }
   });
+}
+
+function validateArgs({ units }) {
   if (Array.isArray(units)) {
     throw new Error('Please only specify one unit type');
   }
+}
 
+function formatLocationArgs({ l: locationFromArga = [], _: unauthorizedArgs }) {
   const locationArgs = Array.isArray(locationFromArga) ? locationFromArga : [locationFromArga];
-  const locations = [...locationArgs, ...unauthorizedArgs];
+  return [...locationArgs, ...unauthorizedArgs];
+}
 
-  main({ locations, units })
+if (require.main === module) {
+  const args = extractArgsFromCommandLine();
+
+  validateArgs(args);
+
+  const locations = formatLocationArgs(args);
+
+  main({ locations, units: args.units })
     .catch((e: Error) => {
       console.error(e);
       process.exit(1);
