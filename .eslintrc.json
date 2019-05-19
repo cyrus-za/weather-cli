@@ -29,6 +29,7 @@
     "import"
   ],
   "rules": {
+    "no-console": "off",
     "import/no-unresolved": "error",
     "@typescript-eslint/indent": [
       2,
