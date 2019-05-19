@@ -18,19 +18,19 @@ describe('index.ts integration', () => {
 
   it('should log the weather for New York', async () => {
     const location = 'New York';
-    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
+    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} --location '${location}'`);
     expect(stderr).toBeFalsy();
     expect(stdout).toContain(`New York weather is currently `);
-    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
+    expect(stdout).toContain(` °K and a humidity of `);
     expect(stdout.length).toBeGreaterThan(70 + location.length);
   });
 
-  it('should log the weather for Tokyo', async () => {
+  it('should log the weather for Tokyo in Metric', async () => {
     const location = 'Tokyo';
-    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} '${location}'`);
+    const { stdout, stderr }: any = await execAsync(`ts-node ${pathToFile} --location '${location}' --units Metric`);
     expect(stderr).toBeFalsy();
     expect(stdout).toContain(`Tokyo weather is currently `);
-    expect(stdout).toContain(` degrees Kelvin and a humidity of `);
+    expect(stdout).toContain(` °C and a humidity of `);
     expect(stdout.length).toBeGreaterThan(70 + location.length);
   });
 });

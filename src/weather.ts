@@ -7,7 +7,7 @@ export const API_KEY = process.env.OPEN_WEATHER_API_KEY;
 
 export const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5';
 
-type Units = 'Standard' | 'Metric' | 'Imperial';
+export type Units = 'Standard' | 'Metric' | 'Imperial';
 
 interface WeatherOptions {
   units?: Units;
@@ -20,13 +20,13 @@ interface WeatherRequestParams extends WeatherOptions {
 
 const unitHash = {
   Imperial: {
-    temperature: 'Fahrenheit'
+    temperature: 'F'
   },
   Metric: {
-    temperature: 'Celsius'
+    temperature: 'C'
   },
   Standard: {
-    temperature: 'Kelvin'
+    temperature: 'K'
   }
 };
 
@@ -35,7 +35,7 @@ const defaultOptions: WeatherOptions = { units: 'Standard' };
 function formatResponse(location, { weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
   const tempUnit = unitHash[units].temperature;
 
-  return `${location} weather is currently ${description} with ${temp} degrees ${tempUnit} and a humidity of ${humidity}%`;
+  return `${location} weather is currently ${description} with ${temp} °${tempUnit} and a humidity of ${humidity}%`;
 }
 
 function validateParams(location, options) {
