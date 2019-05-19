@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import memoize from 'memoizee';
+import { startCase } from 'lodash';
 import { LocationInput, UnitsInput, WeatherResponses } from './types';
 import CONFIG from './config';
 
@@ -30,7 +31,8 @@ const unitHash = {
 const defaultOptions: WeatherOptions = { units: 'Standard' };
 
 function getTemperatureUnit(units: UnitsInput) {
-  return unitHash[units].temperature;
+  const formattedUnits = startCase(units);
+  return unitHash[formattedUnits].temperature;
 }
 
 function formatResponse({ name: locationName, sys: { country }, weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
@@ -43,8 +45,12 @@ function validateParams(location, options) {
   if (!location) {
     throw new Error('Please provide a location');
   }
-  if (options.units && !unitHash[options.units]) {
-    throw new Error(`Units ${options.units} are not supported. Please use one of: ${Object.keys(unitHash).join(', ')}`);
+
+  if (options.units) {
+    const units = startCase(options.units);
+    if (!unitHash[units]) {
+      throw new Error(`Units ${units} are not supported. Please use one of: ${Object.keys(unitHash).join(', ')}`);
+    }
   }
 }
 
