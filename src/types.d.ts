@@ -1,4 +1,21 @@
-/* eslint-disable camelcase */  // not much I can do about the api response shape
+/* eslint-disable camelcase */ // not much I can do about the api response shape
+
+export type UnitsInput = 'Standard' | 'Metric' | 'Imperial';
+
+export type LocationInput = string | number;
+
+export interface MainFnParams {
+  locations: LocationInput[];
+  units?: UnitsInput;
+}
+
+export interface CommandLineArgs extends MainFnParams {
+  _: string[];
+  l: LocationInput[];
+  u?: UnitsInput;
+  location: LocationInput[]; // --location arg also adds to locations
+}
+
 export namespace WeatherResponses {
   interface Coord {
     lon: number;

@@ -1,7 +1,9 @@
+// @ts-ignore
 import minimist from 'minimist';
-import weather, { Units } from './weather';
+import weather from './weather';
+import { CommandLineArgs, MainFnParams } from './types';
 
-async function main({ locations = [] as (string | number)[], units = 'Standard' as Units }) {
+async function main({ locations = [], units = 'Standard' }: MainFnParams) {
   async function getAndLogWeather(location) {
     const response = await weather(location, { units });
     console.log(response);
@@ -12,23 +14,25 @@ async function main({ locations = [] as (string | number)[], units = 'Standard' 
   await Promise.all(promises);
 }
 
-function extractArgsFromCommandLine() {
-  return minimist(process.argv.slice(2), {
-    alias: {
-      u: ['units', 'unit'],
-      l: ['location', 'locations']
-    }
-  });
+function extractArgsFromCommandLine(): CommandLineArgs {
+  const argAliases = {
+    u: ['units', 'unit'],
+    l: ['location', 'locations']
+  };
+
+  const argsString = process.argv.slice(2);
+
+  return minimist<CommandLineArgs>(argsString, { alias: argAliases });
 }
 
-function validateArgs({ units }) {
+function validateArgs({ units }: CommandLineArgs) {
   if (Array.isArray(units)) {
     throw new Error('Please only specify one unit type');
   }
 }
 
-function formatLocationArgs({ l: locationFromArga = [], _: unlinkedArgs }) {
-  const locationArgs = Array.isArray(locationFromArga) ? locationFromArga : [locationFromArga];
+function formatLocationArgs({ l: locationFromArgs = [], _: unlinkedArgs }: CommandLineArgs) {
+  const locationArgs = Array.isArray(locationFromArgs) ? locationFromArgs : [locationFromArgs];
   return [...locationArgs, ...unlinkedArgs];
 }
 

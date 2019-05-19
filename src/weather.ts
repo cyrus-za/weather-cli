@@ -1,17 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
 import memoize from 'memoizee';
-import { WeatherResponses } from './types';
+import { LocationInput, UnitsInput, WeatherResponses } from './types';
+import CONFIG from './config';
 
 import CurrentWeatherDataResponse = WeatherResponses.CurrentWeatherDataResponse;
 
-export const API_KEY = process.env.OPEN_WEATHER_API_KEY;
-
-export const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5';
-
-export type Units = 'Standard' | 'Metric' | 'Imperial';
-
 interface WeatherOptions {
-  units?: Units;
+  units?: UnitsInput;
 }
 
 interface WeatherRequestParams extends WeatherOptions {
@@ -34,10 +29,14 @@ const unitHash = {
 
 const defaultOptions: WeatherOptions = { units: 'Standard' };
 
-function formatResponse({ name, sys: { country }, weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
-  const tempUnit = unitHash[units].temperature;
+function getTemperatureUnit(units: UnitsInput) {
+  return unitHash[units].temperature;
+}
 
-  return `${name} (${country}) weather is currently ${description} with ${temp} °${tempUnit} and a humidity of ${humidity}%`;
+function formatResponse({ name: locationName, sys: { country }, weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
+  const tempUnit = getTemperatureUnit(units);
+
+  return `${locationName} (${country}) weather is currently ${description} with ${temp} °${tempUnit} and a humidity of ${humidity}%`;
 }
 
 function validateParams(location, options) {
@@ -49,7 +48,7 @@ function validateParams(location, options) {
   }
 }
 
-function getCityOrZipToParams(location: string | number) {
+function getCityOrZipToParams(location: LocationInput) {
   switch (typeof location) {
     case 'number':
       return { zip: String(location) };
@@ -57,22 +56,22 @@ function getCityOrZipToParams(location: string | number) {
       if (Number(location)) return getCityOrZipToParams(Number(location));
       return { q: location };
     default:
-      throw new Error('Location must be a string or number');
+      throw new Error('LocationInput must be a string or number');
   }
 }
 
-async function getWeatherForLocationAsync(location: string | number, options: WeatherOptions = {}) {
+async function getWeatherForLocationAsync(location: LocationInput, options: WeatherOptions = {}) {
   validateParams(location, options);
   const params: WeatherRequestParams = {
     ...defaultOptions,
     ...options,
-    appId: API_KEY,
+    appId: CONFIG.OPEN_WEATHER_API_KEY,
     ...getCityOrZipToParams(location)
   };
 
   try {
     const { data }: AxiosResponse<WeatherResponses.CurrentWeatherDataResponse> = await axios.get('/weather', {
-      baseURL: WEATHER_API_URL,
+      baseURL: CONFIG.WEATHER_API_URL,
       params
     });
     return formatResponse(data, params);

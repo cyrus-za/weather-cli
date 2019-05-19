@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import getWeatherForLocationAsync, { API_KEY, Units, WEATHER_API_URL } from './weather';
-import { WeatherResponses } from './types';
+import getWeatherForLocationAsync from './weather';
+import { UnitsInput, WeatherResponses } from './types';
+import CONFIG from './config';
 
 jest.mock('axios');
 
@@ -8,7 +9,7 @@ const mockedAxiosGet: jest.Mock<typeof axios.get> = axios.get as any;
 
 interface UnitValueHash {
   // @ts-ignore
-  [key: Units]: { temperature: number };
+  [key: UnitsInput]: { temperature: number };
 }
 
 // @ts-ignore
@@ -62,9 +63,9 @@ describe('weather.ts', () => {
     const location = 'New York';
     await getWeatherForLocationAsync(location);
     expect(axios.get).toHaveBeenCalledWith('/weather', {
-      baseURL: WEATHER_API_URL,
+      baseURL: CONFIG.WEATHER_API_URL,
       params: {
-        appId: API_KEY,
+        appId: CONFIG.OPEN_WEATHER_API_KEY,
         q: location,
         units: 'Standard'
       }

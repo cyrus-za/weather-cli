@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import * as path from 'path';
 import { promisify } from 'util';
-import { API_KEY } from './weather';
+import CONFIG from './config';
 
 const pathToFile = path.join(__dirname, 'index.ts');
 
@@ -16,7 +16,7 @@ describe('index.ts integration', () => {
   });
 
   it('should have open weather map api key in env', () => {
-    expect(API_KEY).toBeDefined();
+    expect(CONFIG.OPEN_WEATHER_API_KEY).toBeDefined();
   });
 
   it('should log the weather for New York', async () => {

@@ -1,5 +1,6 @@
 import * as index from './index';
 import * as weather from './weather';
+import { LocationInput } from './types';
 
 jest.mock('axios');
 
@@ -19,7 +20,7 @@ describe('index.ts', () => {
   });
 
   it('should log the weather for New York', async () => {
-    const locations = ['New York'];
+    const locations: LocationInput[] = ['New York'];
     await index.default({ locations });
     expect(consoleLog).toHaveBeenCalled();
     expect(consoleLog).toHaveBeenCalledWith('New York (XX) weather is currently cloudy with 22 °C');
