@@ -3,9 +3,11 @@ import { WeatherResponses } from './types';
 
 import CurrentWeatherDataResponse = WeatherResponses.CurrentWeatherDataResponse;
 
+export const API_KEY = process.env.OPEN_WEATHER_API_KEY;
+
 export const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5';
 
-type Units = 'Standard' | 'Metric' | 'Imperial'
+type Units = 'Standard' | 'Metric' | 'Imperial';
 
 interface WeatherOptions {
   units?: Units;
@@ -13,6 +15,7 @@ interface WeatherOptions {
 
 interface WeatherRequestParams extends WeatherOptions {
   q: string;
+  appId: string;
 }
 
 const unitHash = {
@@ -32,10 +35,7 @@ const defaultOptions: WeatherOptions = { units: 'Standard' };
 function formatResponse({ weather: [{ description }], main: { temp, humidity } }: CurrentWeatherDataResponse, { units }: WeatherOptions) {
   const tempUnit = unitHash[units].temperature;
 
-  if (!tempUnit) throw new Error(
-    `Units ${units} are not supported.
-    Please use one of: ${Object.keys(unitHash).join(', ')}
-  `);
+  if (!tempUnit) throw new Error(`Units ${units} are not supported. Please use one of: ${Object.keys(unitHash).join(', ')}`);
 
   return `${description} with ${temp} degrees ${tempUnit} and a humidity of ${humidity}%`;
 }
@@ -44,7 +44,8 @@ async function weather(location: string, options: WeatherOptions = {}) {
   const params: WeatherRequestParams = {
     ...defaultOptions,
     ...options,
-    q: location
+    q: location,
+    appId: API_KEY
   };
   const { data }: AxiosResponse<WeatherResponses.CurrentWeatherDataResponse> = await axios.get('/weather', {
     baseURL: WEATHER_API_URL,
