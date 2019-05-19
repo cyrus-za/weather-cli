@@ -31,6 +31,7 @@
     "typescript": "^3.4.5"
   },
   "scripts": {
+    "logWeather": "ts-node src/index.ts",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test": "jest",
