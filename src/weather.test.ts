@@ -49,4 +49,9 @@ describe('weather.ts', () => {
     expect(response).toEqual('overcast clouds with 289.5 degrees Kelvin and a humidity of 89%');
   });
 
+  it('should get weather response in Celsius', async () => {
+    const response = await weather('', {units: 'metric'});
+    expect(response).toEqual('overcast clouds with 16.35 degrees Celsius and a humidity of 89%');
+  });
+
 });
