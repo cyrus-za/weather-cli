@@ -5,7 +5,7 @@ import CurrentWeatherDataResponse = WeatherResponses.CurrentWeatherDataResponse;
 
 export const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5';
 
-type Units = 'Standard' | 'Metric'
+type Units = 'Standard' | 'Metric' | 'Imperial'
 
 interface WeatherOptions {
   units?: Units;
@@ -16,6 +16,9 @@ interface WeatherRequestParams extends WeatherOptions {
 }
 
 const unitHash = {
+  Imperial: {
+    temperature: 'Fahrenheit'
+  },
   Metric: {
     temperature: 'Celsius'
   },
