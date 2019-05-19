@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import weather, { WEATHER_API_URL } from './weather';
 import { WeatherResponses } from './types';
 
-type Units = 'Standard' | 'Metric'
+type Units = 'Standard' | 'Metric' | 'Imperial'
 jest.mock('axios');
 
 const mockedAxiosGet: jest.Mock<typeof axios.get> = (axios.get as any);
@@ -16,6 +16,9 @@ interface UnitValueHash {
 const unitValueHash: UnitValueHash = {
   Metric: {
     temperature: 16.35
+  },
+  Imperial: {
+    temperature: 61.7
   },
   Standard: {
     temperature: 289.5
@@ -75,6 +78,11 @@ describe('weather.ts', () => {
   it('should get weather response in Celsius', async () => {
     const response = await weather('', { units: 'Metric' });
     expect(response).toEqual('overcast clouds with 16.35 degrees Celsius and a humidity of 89%');
+  });
+
+  it('should get weather response in Imperial', async () => {
+    const response = await weather('', { units: 'Imperial' });
+    expect(response).toEqual('overcast clouds with 61.7 degrees Fahrenheit and a humidity of 89%');
   });
 
 });
