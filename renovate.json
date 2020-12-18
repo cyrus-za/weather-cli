@@ -1,5 +1,16 @@
 {
-  "extends": [
-    "config:base"
+  "extends": ["config:base"],
+  "labels": ["dependencies"],
+  "rangeStrategy": "replace",
+  "lockFileMaintenance": { "enabled": true },
+  "packageRules": [
+    {
+      "updateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "packagePatterns": ["eslint"],
+      "labels": ["linting"]
+    }
   ]
 }
